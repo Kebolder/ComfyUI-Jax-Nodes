@@ -1,5 +1,6 @@
 from comfy_api.latest import ComfyExtension, io
 import re
+import json
 
 from comfy import sd as comfy_sd
 import comfy.utils as comfy_utils
