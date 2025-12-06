@@ -1,0 +1,17 @@
+[project]
+name = "comfyui-jax-nodes"
+description = "Some custom nodes for weird niche needs when working with Krita"
+version = "1.0.0"
+license = { file = "LICENSE" }
+
+[project.urls]
+Repository = "https://github.com/Kebolder/ComfyUI-Jax-Nodes"
+
+[tool.black]
+line-length = 100
+preview = true
+
+[tool.comfy]
+PublisherId = "Kebolder"
+DisplayName = "comfyui-jax-nodes"
+Icon = ""
