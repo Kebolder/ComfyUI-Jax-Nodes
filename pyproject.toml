@@ -1,5 +1,5 @@
 [project]
-name = "comfyui-jax-nodes"
+name = "ComfyUI-Jax-Nodes"
 description = "Some custom nodes for weird niche needs when working with Krita"
 version = "1.0.0"
 license = { file = "LICENSE" }
@@ -12,6 +12,6 @@ line-length = 100
 preview = true
 
 [tool.comfy]
-PublisherId = "Kebolder"
-DisplayName = "comfyui-jax-nodes"
+PublisherId = "kebolder"
+DisplayName = "ComfyUI-Jax-Nodes"
 Icon = ""
