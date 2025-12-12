@@ -16,9 +16,6 @@ Custom ComfyUI nodes for some niche Krita-focused workflows and easier prompt / 
 - `Krita Strength` (`JAX_KritaStrength`)
   - Given `sigmas`, a `strength`, and a `denoise` value, computes an integer step index that approximates Krita-style strength control for diffusion, clamping values to safe ranges.
 
-- `Krita Resize Canvas` (`JAX_KritaResizeCanvas`)
-  - Output node that, when `enabled`, emits a small JSON payload in the UI (`application/x-krita-command`) describing a `resize_canvas` command with the chosen `width` and `height`.
-
 - `Image Size Multiplier` (`JAX_ImageSizeMultiplier`)
   - Multiplies an input `width` and `height` by a `multiplier` and outputs the new dimensions plus a small Markdown string summarizing the final size.
 
