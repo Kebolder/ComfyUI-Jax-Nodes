@@ -54,9 +54,14 @@ class WorkflowExchange:
 
 def _placeholder_image():
     path = Path(__file__).parent / "data" / "external-image-placeholder.webp"
-    image = Image.open(path).convert("RGB")
-    image = np.array(image).astype(np.float32) / 255.0
-    return torch.from_numpy(image)[None,]
+    if path.exists():
+        image = Image.open(path).convert("RGB")
+        image = np.array(image).astype(np.float32) / 255.0
+        return torch.from_numpy(image)[None,]
+
+    # Fallback if the placeholder asset isn't bundled.
+    # Return a simple gray canvas matching the default size.
+    return torch.full((1, 512, 512, 3), 0.5, dtype=torch.float32)
 
 
 class _BasicTypes(str):

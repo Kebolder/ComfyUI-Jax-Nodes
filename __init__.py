@@ -43,3 +43,6 @@ class JaxNodesExtension(ComfyExtension):
 
 async def comfy_entrypoint():
     return JaxNodesExtension()
+
+
+WEB_DIRECTORY = "./js"
