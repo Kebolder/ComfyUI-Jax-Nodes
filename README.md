@@ -28,33 +28,6 @@ Custom ComfyUI nodes for some niche Krita-focused workflows and easier prompt / 
 
 ### Krita Integration
 
-Most of the Krita nodes below are adapted from Acly’s excellent `comfyui-tooling-nodes` project:
-https://github.com/Acly/comfyui-tooling-nodes  
-If you want the latest upstream behavior or additional tooling features, check that repo for updates and changes.
-
-- `Krita Output` (`JAX_KritaOutput`)
-  - Sends images back to Krita via WebSocket; optional canvas resize flag for the Krita plugin UI.
-
-- `Send Text` (`JAX_KritaSendText`)
-  - Sends text/markdown/html back to Krita as a UI payload.
-
-- `Krita Canvas` (`JAX_KritaCanvas`)
-  - Placeholder canvas image plus width/height/seed outputs for Krita-started workflows.
-
-- `Krita Selection` (`JAX_KritaSelection`)
-  - Placeholder selection mask and active flag.
-
-- `Krita Image Layer` (`JAX_KritaImageLayer`)
-  - Placeholder layer image and mask for Krita integration.
-
-- `Krita Mask Layer` (`JAX_KritaMaskLayer`)
-  - Placeholder mask layer output.
-
-- `Parameter` (`JAX_Parameter`)
-  - Workflow parameter node with typed defaults/min/max, matching Krita parameter UI.
-
-- `Krita Style` (`JAX_KritaStyle`)
-  - Krita-managed style/sampler preset outputs. Intended for workflows started from Krita.
 
 - `Krita Strength` (`JAX_KritaStrength`)
   - Given `sigmas`, a `strength`, and a `denoise` value, computes an integer step index that approximates Krita-style strength control for diffusion, clamping values to safe ranges.

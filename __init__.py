@@ -7,17 +7,7 @@ from .utilitynodes import (
     ImageSizeMultiplier,
 )
 from .conditioningnodes import SimpleLoraPromptEncoder, LoraPromptEncoder
-from .kritanodes import (
-    KritaOutput,
-    KritaSendText,
-    KritaCanvas,
-    KritaSelection,
-    KritaImageLayer,
-    KritaMaskLayer,
-    Parameter,
-    KritaStyle,
-    KritaStrength,
-)
+from .kritanodes import KritaStrength
 
 
 class JaxNodesExtension(ComfyExtension):
@@ -29,14 +19,6 @@ class JaxNodesExtension(ComfyExtension):
             ImageSizeMultiplier,
             SimpleLoraPromptEncoder,
             LoraPromptEncoder,
-            KritaOutput,
-            KritaSendText,
-            KritaCanvas,
-            KritaSelection,
-            KritaImageLayer,
-            KritaMaskLayer,
-            Parameter,
-            KritaStyle,
             KritaStrength,
         ]
 
