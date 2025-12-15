@@ -1,7 +1,7 @@
 [project]
 name = "ComfyUI-Jax-Nodes"
 description = "Some custom nodes for weird niche needs when working with Krita"
-version = "1.0.3"
+version = "1.0.5"
 license = { file = "LICENSE" }
 
 [project.urls]

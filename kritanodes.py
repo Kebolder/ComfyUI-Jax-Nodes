@@ -223,6 +223,10 @@ _param_types = [
 _fmax = sys.float_info.max
 
 
+def _is_numeric_param_type(param_type: str) -> bool:
+    return param_type in {"number", "number (integer)"}
+
+
 class Parameter(io.ComfyNode):
     @classmethod
     def define_schema(cls):
@@ -233,6 +237,7 @@ class Parameter(io.ComfyNode):
             inputs=[
                 io.String.Input("name", default="Parameter"),
                 io.Combo.Input("type", options=_param_types, default="auto"),
+                io.Boolean.Input("mainslider", default=False),
                 io.String.Input("default", default=""),
                 io.Float.Input("min", default=0.0, min=-_fmax, max=_fmax, optional=True),
                 io.Float.Input("max", default=1.0, min=-_fmax, max=_fmax, optional=True),
@@ -241,12 +246,43 @@ class Parameter(io.ComfyNode):
         )
 
     @classmethod
-    def execute(cls, name: str, type: str, default, min=0.0, max=1.0):
+    def execute(
+        cls,
+        name: str,
+        type: str,
+        mainslider: bool = False,
+        default=None,
+        min: float = 0.0,
+        max: float = 1.0,
+    ):
         if type == "number":
-            return io.NodeOutput(float(default))
+            value = float(default)
         elif type == "number (integer)":
-            return io.NodeOutput(int(default))
-        return io.NodeOutput(default)
+            value = int(default)
+        else:
+            value = default
+
+        ui: dict[str, Any] = {}
+        if mainslider:
+            if not _is_numeric_param_type(type):
+                print(
+                    f"[JAX_Parameter] mainslider=True ignored for '{name}': "
+                    f"only numeric types are supported (got type='{type}')."
+                )
+            else:
+                # Values in the UI dict must be lists so ComfyUI can concatenate them
+                # across batched executions.
+                ui["jax_mainslider_candidates"] = [
+                    {
+                        "name": name,
+                        "type": type,
+                        "default": value,
+                        "min": float(min),
+                        "max": float(max),
+                    }
+                ]
+
+        return io.NodeOutput(value, ui=ui or None)
 
 
 class KritaStyle(io.ComfyNode):

@@ -55,11 +55,11 @@ import { app } from "/scripts/app.js"
         if (parameterTypeMismatch) {
             node.widgets[1].value = defaultParameterType(type, connectedNode, connectedWidget)
         }
-        const oldDefault = node.widgets.length > 2 ? node.widgets[2].value : connectedWidget.value
-        const oldMin = optionalWidgetValue(node.widgets, 3, options?.min ?? 0)
-        const oldMax = optionalWidgetValue(node.widgets, 4, options?.max ?? 100)
+        const oldDefault = node.widgets.length > 3 ? node.widgets[3].value : connectedWidget.value
+        const oldMin = optionalWidgetValue(node.widgets, 4, options?.min ?? 0)
+        const oldMax = optionalWidgetValue(node.widgets, 5, options?.max ?? 100)
         const isDefaultValid = valueMatchesType(oldDefault, type, connectedWidget.options)
-        while (node.widgets.length > 2) {
+        while (node.widgets.length > 3) {
             node.widgets.pop()
         }
         const value = isDefaultValid && oldDefault !== "" ? oldDefault : connectedWidget.value
@@ -67,6 +67,57 @@ import { app } from "/scripts/app.js"
         if (type === "number") {
             node.addWidget("number", "min", oldMin, null, options)
             node.addWidget("number", "max", oldMax, null, options)
+        }
+    }
+
+    function ensureSingleMainSlider(graph) {
+        const mainSliderNodes = []
+        for (const node of graph._nodes ?? []) {
+            if (node?.comfyClass !== "JAX_Parameter") continue
+            const mainSliderWidget = node.widgets?.find((w) => w.name === "mainslider")
+            if (mainSliderWidget?.value === true) {
+                mainSliderNodes.push(node)
+            }
+        }
+        if (mainSliderNodes.length > 1) {
+            const names = mainSliderNodes
+                .map((n) => n.widgets?.find((w) => w.name === "name")?.value ?? `#${n.id}`)
+                .join(", ")
+            console.warn(`[jax_krita_nodes] Multiple Parameter nodes have mainslider=true; only the first will be used (${names}).`)
+        }
+    }
+
+    function enforceNumericMainSlider(node) {
+        const typeWidget = node.widgets?.find((w) => w.name === "type")
+        const mainSliderWidget = node.widgets?.find((w) => w.name === "mainslider")
+        if (!typeWidget || !mainSliderWidget) return
+
+        const isNumeric = typeWidget.value === "number" || typeWidget.value === "number (integer)"
+        if (mainSliderWidget.value === true && !isNumeric) {
+            mainSliderWidget.value = false
+            console.warn(`[jax_krita_nodes] mainslider is only supported for numeric types ("number" or "number (integer)").`)
+        }
+    }
+
+    function attachMainSliderCallbacks(node) {
+        const typeWidget = node.widgets?.find((w) => w.name === "type")
+        const mainSliderWidget = node.widgets?.find((w) => w.name === "mainslider")
+        if (typeWidget && !typeWidget._jaxMainSliderCallbackAttached) {
+            typeWidget._jaxMainSliderCallbackAttached = true
+            const old = typeWidget.callback
+            typeWidget.callback = function () {
+                old?.apply(this, arguments)
+                enforceNumericMainSlider(node)
+            }
+        }
+        if (mainSliderWidget && !mainSliderWidget._jaxMainSliderCallbackAttached) {
+            mainSliderWidget._jaxMainSliderCallbackAttached = true
+            const old = mainSliderWidget.callback
+            mainSliderWidget.callback = function () {
+                old?.apply(this, arguments)
+                enforceNumericMainSlider(node)
+                ensureSingleMainSlider(node.graph)
+            }
         }
     }
 
@@ -97,11 +148,17 @@ import { app } from "/scripts/app.js"
 
             const widgetType = theirWidget.origType ?? theirWidget.type
             changeWidgets(node, widgetType, theirNode, theirWidget)
+            enforceNumericMainSlider(node)
+            attachMainSliderCallbacks(node)
+            ensureSingleMainSlider(node.graph)
 
         } else if (!links || links.length === 0) {
             node.outputs[0].type = "*"
             node.widgets[1].value = "auto"
             node.widgets[1].options = { values: ["auto"] }
+            enforceNumericMainSlider(node)
+            attachMainSliderCallbacks(node)
+            ensureSingleMainSlider(node.graph)
         }
     }
 
@@ -147,4 +204,3 @@ import { app } from "/scripts/app.js"
         },
     })
 })();
-
